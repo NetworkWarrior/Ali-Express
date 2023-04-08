@@ -7,8 +7,13 @@ from django.urls import reverse
 from django.views import View
 from .models import Product, ProductReview
 from .forms import ProductReviewForm, LocalProductForm
+import stripe
+from django.conf import settings
+from django.http import JsonResponse, HttpResponseRedirect
+
 # Create your views here.
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 class ProductListView(View):
     def get(self, request):
@@ -56,9 +61,40 @@ class ProductDetailView(LoginRequiredMixin, View):
         return render(request, 'products/products_detail.html',{'product': product, 'page_obj': page_obj, 'review_form': review_form})
 
 
+class CheckoutView(View):
+    def get(self, request, id):
+        product = Product.objects.get(id=id)
+        return render(request, 'products/payment.html', {'product':product})
+
 class ProductPaymentView(View):
-    def get(self, request):
-        return render(request, 'products/payment.html')
+    def post(self, request):
+        product_id = request.POST.get('product_id')
+        product = Product.objects.get(id=product_id)
+        YOUR_DOMAIN = "http://127.0.0.1:8000"
+
+        # Create a Price object for the product
+        price = stripe.Price.create(
+            unit_amount=int(product.price * 100),
+            currency='usd',
+            product_data={
+                'name': product.name,
+            },
+        )
+
+        # Use the ID of the Price object as the value of the `price` parameter
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    'price': price.id,
+                    'quantity': 1,
+                },
+            ],
+            mode='payment',
+            success_url=YOUR_DOMAIN + '/success',
+            cancel_url=YOUR_DOMAIN + '/cancel',
+        )
+        return HttpResponseRedirect(checkout_session.url)
+
 
 
 class SellProductListView(View):
@@ -78,10 +114,7 @@ class SellProductListView(View):
             context = {'form': form}
             return render(request, 'products/sell_product.html', context)
 
-class SellProductDetailView(View):
-    def get(self, request, id):
-        product = Product.objects.get(id = id)
-        return render(request, 'products/detail_sell_product.html', {'product':product})
+
 
 
 

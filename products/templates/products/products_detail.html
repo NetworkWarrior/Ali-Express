@@ -25,6 +25,7 @@
 </head>
 
 <body>
+{%if not product.local%}
     <div class="grid-container my-4">
 
       <div class="grid-item ms-3">
@@ -133,7 +134,7 @@
               <p>90 day buyer protection</p>
               <hr>
               <div>
-                  <a href="{%url 'products:product_payment'%}">
+                  <a href="{%url 'products:checkout_payment' product.id%}">
                       <button type="submit" class="cosmos-btn cosmos-btn-large cosmos-btn-block " data-spm-anchor-id="a2g0o.best.0.i21.40a52c25kXePgB"><span><b>Buy Now</b></span></button>
                   </a>
               </div>
@@ -144,12 +145,6 @@
           </div>
       </div>
     </div>
-
-
-
-
-
-
 
 
     <div class="grid-page">
@@ -172,5 +167,131 @@
         <div>
         </div>
     </div>
+
+
+
+{%else%}
+
+<div class="grid-container my-4">
+
+      <div class="grid-item ms-3">
+          {%for obj in page_obj%}
+              <div style="width: 420px; height: 440px;">
+                  <img class="ui-rect ui-bg-cover" style="background-image: url('{{obj.picture.url}}'); border-radius: 10px;">
+              </div>
+          {%endfor%}
+         <nav>
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}"><<</a></li>
+                {% endif %}
+                {% if page_obj.has_next%}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">>></a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        <div class="me-5">
+            <ul class="navbar-nav me-4">
+                <li class="nav-item dropdown">
+                  <a class="btn btn-success " href="#" role="button" data-bs-toggle="dropdown" >
+                    Add Review
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li>
+                        <form method="POST" class="mx-3" style="width: 250px">
+                          {% csrf_token %}
+                          {{ review_form|crispy }}
+                          <button type="submit" class="cosmos-btn cosmos-btn-large cosmos-btn-block " data-spm-anchor-id="a2g0o.best.0.i21.40a52c25kXePgB"><span><b>SUBMIT</b></span></button>
+                        </form>
+                    </li>
+                  </ul>
+                </li>
+            </ul>
+        </div>
+      </div>
+
+
+
+
+      <div class="grid-item">
+            <div class="my-4" style="background: linear-gradient(90deg,#ff640e,#ff3000); height: 40px; border-radius:10px;">
+             <h4 class="ms-3" style="color: white;">{{product.name}}</h4>
+          </div>
+          <div class="mb-4">
+              <div class="mt-4">
+                  <p>
+                  {% if product.productreview_set.all %}
+                      <img src="https://ae01.alicdn.com/kf/S3a90fde0c9cc4b8c8958a6ee7553e26bf/42x42.png" class="ae-stars" alt="" style="width: 12px; height: 14px;" data-spm-anchor-id="a2g0o.detail.1000024.i0.7c105XRR5XRRx6">
+                      <img src="https://ae01.alicdn.com/kf/S3a90fde0c9cc4b8c8958a6ee7553e26bf/42x42.png" class="ae-stars" alt="" style="width: 12px; height: 14px;" data-spm-anchor-id="a2g0o.detail.1000024.i0.7c105XRR5XRRx6">
+                      <img src="https://ae01.alicdn.com/kf/S3a90fde0c9cc4b8c8958a6ee7553e26bf/42x42.png" class="ae-stars" alt="" style="width: 12px; height: 14px;" data-spm-anchor-id="a2g0o.detail.1000024.i0.7c105XRR5XRRx6">
+                      <img src="https://ae01.alicdn.com/kf/S3a90fde0c9cc4b8c8958a6ee7553e26bf/42x42.png" class="ae-stars" alt="" style="width: 12px; height: 14px;" data-spm-anchor-id="a2g0o.detail.1000024.i0.7c105XRR5XRRx6">
+                      <img src="https://ae01.alicdn.com/kf/S3a90fde0c9cc4b8c8958a6ee7553e26bf/42x42.png" class="ae-stars" alt="" style="width: 12px; height: 14px;" data-spm-anchor-id="a2g0o.detail.1000024.i0.7c105XRR5XRRx6">
+
+                    {{product.average_rating}} <span class="mx-2">{{ product.productreview_set.count }} Reviews</span>
+                  {% else %}
+                        No reviews for yet.
+                  {% endif %}
+                  </p>
+              </div>
+
+          </div>
+          <hr>
+          <b>
+
+                <h1 style="font-weight: 700;">{{product.price}} zł</h1>
+
+          </b>
+
+
+          <p style="color:lightgrey;">Price includes VAT</p>
+
+
+      </div>
+
+
+      <div class="grid-item ms-5 static-frame">
+          <div class="product-detail-frame" style="height: 440px;">
+              <div>
+                  <img class="review-user-picture" src="{{product.user.picture.url}}"> <span style="float: right;">from <b>{{product.user.get_country_name}}</b> </span>
+              </div>
+              <hr>
+
+              <div class="div-size">
+                 <b>{{product.user.username}}</b>
+                  <p>
+                     {{product.description}}
+                  </p>
+
+              </div>
+              <hr>
+              <div>
+                  <button type="submit" style="background-color: #ffe6e7; color: rgb(253, 56, 79);" class="cosmos-btn cosmos-btn-large cosmos-btn-block " data-spm-anchor-id="a2g0o.best.0.i21.40a52c25kXePgB"><span><b>See Profile</b></span></button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+<div class="grid-page">
+        <div>
+            <hr>
+            {%for review in product.productreview_set.all%}
+                <div style="font-size: 15px;" class="grid-review-box review-box">
+                    <div style=" display: inline-block" class=" me-3">
+                        <img class="review-user-picture" src="{{review.user.picture.url}}" alt="not found">
+                    </div>
+                    <div style="display: inline-block;">
+                        <p><b>@{{ review.user.username }}</b> <span style="font-size:12px;">{{ review.created_at | timesince}} ago</span> </p>
+                        <p>{{ review.comment | truncatechars:400}}</p>
+                        <p>{{ review.stars_given }}</p>
+                    </div>
+                </div>
+            {%endfor%}
+        </div>
+
+        <div>
+        </div>
+    </div>
+
+{%endif%}
 </body>
 {%endblock%}

@@ -92,6 +92,12 @@ class Product(models.Model):
         else:
             return None
 
+    def get_first_picture(self):
+        try:
+            return self.productpicture_set.first().picture.url
+        except AttributeError:
+            return None
+
 class ProductPicture(models.Model):
     picture = models.ImageField(default='product_image.png')
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)

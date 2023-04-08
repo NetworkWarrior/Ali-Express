@@ -57,7 +57,7 @@
         {% for product in products %}
             {% if product.local %}
             <div style="inline-block">
-                <a href="{% url 'products:product_sell_detail' product.id %}" class="product-link" data-id="{{ product.id }}">
+                <a href="{% url 'products:product_detail' product.id %}" class="product-link" data-id="{{ product.id }}">
                     <div class="local-box grid-local-container">
                         <div class="grid-item">
                             {% if product.productpicture_set.exists %}

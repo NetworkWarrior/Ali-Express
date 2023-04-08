@@ -39,7 +39,7 @@
           <a class="nav-link disabled">Disabled</a>
         </li>
       </ul>
-        <a style="text-decoration:none; color:black;" href= "{%url 'products:product_list'%}">
+        <a style="text-decoration:none; color:black;" href= "{{ request.META.HTTP_REFERER }}">
           EXIT <i class="bi bi-box-arrow-right"></i>
         </a>
     </div>
